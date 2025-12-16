@@ -20,12 +20,12 @@ watch(apiData, (newVal) => {
 onMounted(() => {
   animeApiStore.fetchAnimeData()
 })
-</script>g
+</script>
 
 <template>
   <main class="container bg-[#EDEDED] p-5">
 
-    <div class="flex flex-wrap" v-if="animeApiStore.homeData && !animeApiStore.customError && !animeApiStore.isLoading">
+    <div class="flex justify-center flex-wrap" v-if="animeApiStore.homeData && !animeApiStore.customError && !animeApiStore.isLoading">
       <base-anime-card v-for="anime in animeRouteStore.data" :key="anime.id" :anime="anime">
       </base-anime-card>
     </div>

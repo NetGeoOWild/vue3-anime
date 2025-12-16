@@ -11,7 +11,7 @@ const route = useRoute();
 const animeId = Number(route.params.id) as unknown as OneAnime['id']
 const anime = animeRouteStore.getData(animeId) as unknown as OneAnime
 
-const animeTitle = useAnime(anime).animeTitle
+const animeUse = useAnime(anime)
 </script>
 
 <template>
@@ -19,8 +19,7 @@ const animeTitle = useAnime(anime).animeTitle
     <div v-if="anime">
       <div class="flex items-start max-[981px]:flex-wrap">
         <div class="w-full max-w-[200px] relative mr-[15px] max-[981px]:mx-auto max-[981px]:mb-[15px]">
-          <img v-if="anime.poster && anime.poster.webp.image_url" class="block rounded-lg" :src="anime.poster?.webp.image_url" alt="poster" />
-          <div v-else>Картинка - Заглушка</div>
+          <img class="block rounded-lg" :src="animePoster" alt="poster" />
           <span
             class="block absolute top-1.5 left-1.5 text-white bg-green-500 rounded-sm px-[3px]  py-[5px] text-[14px] font-semibold">
             {{ anime.year || 'XXXX' }}
@@ -36,7 +35,7 @@ const animeTitle = useAnime(anime).animeTitle
 
         <div>
           <div class="max-w-[900px] mb-[15px]">
-            <h3 class="block mb-[15px] font-bold text-2xl">{{ animeTitle }}</h3>
+            <h3 class="block mb-[15px] font-bold text-2xl">{{ animeUse.animeTitle }}</h3>
             <ul>
               <li class="mb-2 text-xl"><span class="font-bold text-lg">Год выпуска:</span> {{ anime.year || 'XXXX'}}</li>
               <li class="mb-2 text-xl"><span class="font-bold text-lg">Жанр:</span> {{ anime.genres.map((genre) => genre.name).join(' / ') }}</li>
