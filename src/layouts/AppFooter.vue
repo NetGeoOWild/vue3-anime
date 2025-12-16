@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer">
+  <footer class="footer mb-[50px]">
     <div class="container">
       <div class="bg-gray-500 px-15 py-5 max-[1220px]:px-5 hover:bg-transparent transition-all duration-700">
         <div class="flex items-center align-middle">
