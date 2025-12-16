@@ -20,7 +20,7 @@ watch(apiData, (newVal) => {
 onMounted(() => {
   animeApiStore.fetchAnimeData()
 })
-</script>
+</script>g
 
 <template>
   <main class="container bg-[#EDEDED] p-5">
