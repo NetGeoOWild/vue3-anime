@@ -1,5 +1,6 @@
-import { defineStore } from 'pinia'
 import { ref, shallowRef, computed } from 'vue'
+import { defineStore } from 'pinia'
+import { useToast } from 'vue-toastification'
 import type { Anime, ApiAnimeList } from '@/types/api'
 import type { AnimeList, OneAnime } from '@/types/anime'
 import { STORE_PERSIST_FAVORITES } from '@/constants'
@@ -7,6 +8,7 @@ import { STORE_PERSIST_FAVORITES } from '@/constants'
 export const useAnimeRouteStore = defineStore(
   'routeAnime',
   () => {
+    const toast = useToast()
     const data = shallowRef<AnimeList | null>(null)
 
     const fillData = (apiAnimeList: ApiAnimeList): AnimeList | null => {
@@ -45,10 +47,12 @@ export const useAnimeRouteStore = defineStore(
     })
 
     const addToFavorites = (anime: OneAnime): void => {
+      toast.success('Добавлено в избранное')
       favorites.value.push(anime)
     }
 
     const removeFromFavorites = (animeId: OneAnime['id']): AnimeList => {
+      toast.warning('Удалено из избранного')
       return (favorites.value = favorites.value.filter((anime) => anime.id !== animeId))
     }
 

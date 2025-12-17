@@ -17,7 +17,9 @@ const animeUse = useAnime(props.anime)
   <router-link :to="{ name: 'anime', params: { id: anime.id } }"
     class="block relative min-h-[200px] w-[18%] max-[950px]:w-[20%] max-[760px]:w-[25%] max-[591px]:w-[33%] max-[471px]:w-full mb-2.5 mx-[5px]">
     <div class="max-h-[200px] overflow-hidden">
-      <img class="block w-full min-h-full" :src="animeUse.displayedImg.value" @error="animeUse.onImageError" />
+      <img class="block w-full min-h-full"
+       v-lazy="{ src: anime.poster?.webp.image_url, loading: anime.poster?.webp.image_url, error: animeUse.imagePlaceholder }"
+       alt="Poster" />
     </div>
     <div
       class="text-white font-bold absolute left-0 right-0 bottom-0 py-1.5 text-center bg-gray-600/80 overflow-hidden">
