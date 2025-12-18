@@ -1,42 +1,42 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { useAnimeRouteStore } from '@/stores/animeRouteStore';
+import { useAnimeApiStore } from '@/stores/animeApiStore';
 import { useAnime } from '@/composables/useAnime';
-import type { OneAnime } from '@/types/anime';
+import type { AnimeList, OneAnime } from '@/types/anime';
+import type { ApiAnimeList } from '@/types/api';
 import BaseFavoriteBtn from '@/components/ui/BaseFavoriteBtn.vue';
+import BaseBtn from '@/components/ui/BaseBtn.vue';
+
 
 const animeRouteStore = useAnimeRouteStore();
+const animeApiStore = useAnimeApiStore()
 const route = useRoute();
-const router = useRouter();
 
 const animeId = Number(route.params.id) as unknown as OneAnime['id']
-const anime = animeRouteStore.getData(animeId) as unknown as OneAnime
+const anime = ref<OneAnime | null>(null)
 
-const animeUse = useAnime(anime)
+const animeUse = ref<object | null>(null)
 
-const previousRoute = router.options.history.state.back
-const routeInfo = router.resolve(previousRoute as object)
-
-function goToPage() {
-  router.push({
-    name: routeInfo.name,
-  })
-}
+onMounted(async () => {
+  const data = await animeApiStore.fetchAnimeById(animeId)
+  const animeList = animeRouteStore.fillData(data as ApiAnimeList) as AnimeList
+  anime.value = animeList[0] as OneAnime
+  animeUse.value = useAnime(anime.value)
+})
 </script>
 
 <template>
   <main class="container bg-[#EDEDED] p-5">
     <div v-if="anime">
-      <button @click="goToPage" class="max-w-[200px] block bg-green-700 text-white uppercase text-center text-sm
-     font-bold px-2 py-2 rounded-sm cursor-pointer hover:bg-green-600 transition-all duration-300 mb-5
-     max-[981px]:mx-auto max-[981px]:max-w-[300px] max-[981px]:text-lg max-[981px]:mb-10">
-        {{  routeInfo.name === 'home' ? 'Вернуться на главную' : 'Вернуться к избранному'  }}
-      </button>
+      <!--button-->
+      <base-btn @click="$router.back">Вернуться назад</base-btn>
+      <!--button-->
       <div class="flex items-start max-[981px]:flex-wrap">
         <div
-          class="w-full max-w-[200px] relative mr-[15px] max-[981px]:mx-auto max-[981px]:mb-[15px] max-[981px]:max-w-[300px]">
-          <img class="block rounded-lg w-full"
+          class="min-h-[250px] w-full max-w-[200px] relative mr-[15px] max-[981px]:mx-auto max-[981px]:mb-[15px] max-[981px]:max-w-[300px]">
+          <img class="block rounded-lg w-full max-h-[250px] max-[981px]:max-h-full"
             v-lazy="{ src: anime.poster?.webp.image_url, loading: anime.poster?.webp.image_url, error: animeUse.imagePlaceholder }"
             alt="Poster" />
           <span
@@ -79,10 +79,9 @@ function goToPage() {
       </div>
     </div>
     <div class="text-center" v-else>
-      <router-link :to="{ name: 'home' }" class="max-w-[300px] mx-auto block bg-green-700 text-white uppercase text-center text-lg
-     font-bold px-2 py-2 rounded-sm cursor-pointer hover:bg-green-600 transition-all duration-300 mb-5">
-        Вернуться на главную
-      </router-link>
+      <!--button-->
+      <base-btn class="mx-auto" @click="$router.back">Вернуться назад</base-btn>
+      <!--button-->
       <p class="text-xl font-bold">Ничего не найдено :(</p>
     </div>
   </main>

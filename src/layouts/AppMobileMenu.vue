@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useMobileMenu } from '@/composables/useMobileMenu';
 
-const emits = defineEmits(['close-mobile'])
 const { closeMobileMenu } = useMobileMenu();
 
-const props = defineProps({
+defineEmits(['close-mobile'])
+
+defineProps({
   isMobileMenuOpen: {
     type: Boolean,
     required: true,
