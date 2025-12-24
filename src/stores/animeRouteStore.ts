@@ -10,8 +10,10 @@ export const useAnimeRouteStore = defineStore(
   () => {
     const toast = useToast()
     const data = shallowRef<AnimeList | null>(null)
+    const favorites = ref<AnimeList>([])
 
     const fillData = (apiAnimeList: ApiAnimeList): AnimeList | null => {
+
       if (!apiAnimeList) {
         return null
       }
@@ -37,8 +39,6 @@ export const useAnimeRouteStore = defineStore(
         }
       }))
     }
-
-    const favorites = ref<AnimeList>([])
 
     const isAnimeFavorite = computed(() => {
       return (animeId: OneAnime['id']): boolean => {
