@@ -1,16 +1,20 @@
-import { ref, shallowRef } from 'vue'
+import { ref, shallowRef, watch } from 'vue'
 import { defineStore } from 'pinia'
 import axios, { AxiosError } from 'axios'
-import { CACHE_TIME, STORE_PERSIST_ANIME_FETCH_DATA, BASE_URL } from '@/constants'
-import type { ApiAnimeList, ApiData } from '@/types/api'
-import type { AnimeList, OneAnime } from '@/types/anime'
 import { useAnimeRouteStore } from './animeRouteStore'
 import { useAnimeStore } from './animeStore'
-import { useRoute } from 'vue-router'
+import { CACHE_TIME, STORE_PERSIST_ANIME_FETCH_DATA, BASE_URL, BASE_SEARCH_URL } from '@/constants'
+import type { ApiAnimeList, ApiData } from '@/types/api'
+import type { AnimeList, OneAnime } from '@/types/anime'
 
 export const useAnimeApiStore = defineStore(
   'apiAnimeData',
   () => {
+    const searchInput = ref<string>('')
+    const apiUrl = ref<string>(BASE_URL)
+    const isSearch = ref<boolean>(false)
+    const loadMoreBtn = ref<boolean>(false)
+
     const firstPage = shallowRef<ApiData | null>(null)
     const homeData = ref<ApiData | null>(null)
     const rawAnime = ref<ApiAnimeList | null>(null)
@@ -20,18 +24,31 @@ export const useAnimeApiStore = defineStore(
 
     const animeRouteStore = useAnimeRouteStore()
     const animeStore = useAnimeStore()
-    const route = useRoute()
+
+    watch(
+      searchInput,
+      (newVal) => {
+        if (newVal.length === 0) {
+          apiUrl.value = `${BASE_URL}?page=`
+          isSearch.value = false
+        } else {
+          apiUrl.value = `${BASE_SEARCH_URL}${searchInput.value}&page=`
+          isSearch.value = true
+        }
+      },
+      { immediate: true },
+    )
 
     async function fetchAnimeData(
-      url: string = BASE_URL,
+      url: string = apiUrl.value,
       page: number = 1,
-      force: boolean = false,
-      loadMore: boolean = false,
+      loadMore: boolean = loadMoreBtn.value,
+      search: boolean = isSearch.value,
     ): Promise<ApiData | AxiosError> {
       const now: number = Date.now()
       const storageData = localStorage.getItem(STORE_PERSIST_ANIME_FETCH_DATA)
 
-      if (storageData && !force && !loadMore) {
+      if (storageData && !loadMore && !search && page === 1) {
         const parsedData = JSON.parse(storageData)
 
         if (isValidApiResponse(parsedData.firstPage)) {
@@ -49,7 +66,7 @@ export const useAnimeApiStore = defineStore(
       isLoading.value = true
 
       try {
-        const response = await axios.get(`${url}?page=${page}`)
+        const response = await axios.get(`${url}${page}`)
 
         if (loadMore) {
           const oldVal = homeData.value as ApiData
@@ -65,7 +82,7 @@ export const useAnimeApiStore = defineStore(
         homeData.value = response.data
         lastFetch.value = now
 
-        if (homeData.value?.pagination.current_page === 1) {
+        if (homeData.value?.pagination.current_page === 1 && !search) {
           firstPage.value = homeData.value
         }
 
@@ -90,18 +107,17 @@ export const useAnimeApiStore = defineStore(
       return apiAnime
     }
 
-    async function fetchAnimeById(
-      animeId: OneAnime['id'],
-      force: boolean = false,
-    ): Promise<ApiAnimeList | AxiosError> {
+    async function fetchAnimeById(animeId: OneAnime['id']): Promise<ApiAnimeList | AxiosError> {
       const storageData = localStorage.getItem(STORE_PERSIST_ANIME_FETCH_DATA)
 
-      if (storageData && !force) {
+      if (storageData) {
         const parsedData = JSON.parse(storageData)
 
         if (isValidApiResponse(parsedData.homeData)) {
           rawAnime.value = findAnime(parsedData.homeData.data, animeId) as ApiAnimeList
-          return rawAnime.value
+          if (rawAnime.value.length !== 0) {
+            return rawAnime.value
+          }
         }
       }
 
@@ -146,19 +162,22 @@ export const useAnimeApiStore = defineStore(
       return true
     }
 
-    async function retryAnimeCards(): Promise<void> {
-      const currentPage = Number(route.query['page'])
-      const homeData = await fetchAnimeData(undefined, currentPage, true) as ApiData
-      animeRouteStore.fillData(homeData.data as ApiAnimeList)
+    async function retryAnimeCards(page: number): Promise<void> {
+      const apiAnimeData = await fetchAnimeData(undefined, page) as ApiData
+      animeRouteStore.fillData(apiAnimeData.data) as AnimeList
     }
 
     async function retryAnimeById(apiAnimeId: OneAnime['id']): Promise<void> {
-      const apiAnimeList = await fetchAnimeById(apiAnimeId, true)
-      const animeList = animeRouteStore.fillData(apiAnimeList as ApiAnimeList) as AnimeList
-      animeStore.anime = animeList[0] as OneAnime
+      const apiAnimeData = await fetchAnimeById(apiAnimeId)
+      const apiAnimeList = animeRouteStore.fillData(apiAnimeData as ApiAnimeList) as AnimeList
+      animeStore.anime = apiAnimeList[0] as OneAnime
     }
 
     return {
+      loadMoreBtn,
+      searchInput,
+      apiUrl,
+      isSearch,
       rawAnime,
       firstPage,
       homeData,

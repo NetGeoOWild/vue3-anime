@@ -1,9 +1,16 @@
+<script setup lang="ts">
+import { usePaginationStore } from '@/stores/paginationStore';
+import { useRoute } from 'vue-router';
+const route = useRoute()
+const paginationStore = usePaginationStore()
+</script>
+
 <template>
   <footer class="footer mb-[250px] max-[470px]:mb-0">
     <div class="container">
       <div class="bg-gray-500 px-15 py-5 max-[1220px]:px-5 hover:bg-transparent transition-all duration-700">
         <div class="flex items-center align-middle">
-          <router-link :to="{ name: 'home' }" class="block">
+          <router-link :to="{ name: 'home', query: { ...route.query, page: paginationStore.currPage } }" class="block">
             <img class="block w-full max-w-[200px]" src="../assets/images/logo.png" alt="logo" />
           </router-link>
           <p class="text-white text-lg">

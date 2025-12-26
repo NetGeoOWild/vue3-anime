@@ -88,6 +88,5 @@ onMounted(async () => {
     <base-axios-error v-if="animeApiStore.customError" :error="animeApiStore.customError"
       @retry="animeApiStore.retryAnimeById(animeId)">
     </base-axios-error>
-
   </main>
 </template>

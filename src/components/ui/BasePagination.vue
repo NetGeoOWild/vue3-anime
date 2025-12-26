@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { usePagination } from '@/composables/usePagination';
-import BaseBtn from './BaseBtn.vue';
 import { useAnimeApiStore } from '@/stores/animeApiStore';
+import { usePaginationStore } from '@/stores/paginationStore';
+import BaseBtn from './BaseBtn.vue';
 
-const pagination = usePagination()
-const currPage = ref(pagination.currPage)
-const displayedPages = ref(pagination.displayedPages)
+const paginationStore = usePaginationStore()
 const animeApiStore = useAnimeApiStore()
 </script>
 
@@ -16,7 +13,7 @@ const animeApiStore = useAnimeApiStore()
       <button
       class="flex justify-center items-center w-[30px] h-[30px] cursor-pointer disabled:cursor-not-allowed"
       :disabled="animeApiStore.isLoading"
-      @click="pagination.prevPage"
+      @click="paginationStore.prevPage"
       >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
           class="size-5">
@@ -24,12 +21,12 @@ const animeApiStore = useAnimeApiStore()
         </svg>
       </button>
     </li>
-    <li v-for="page in displayedPages" :key="page" class="w-[30px] h-[30px]">
+    <li v-for="page in paginationStore.displayedPages" :key="page" class="w-[30px] h-[30px]">
       <button
         class="flex justify-center items-center w-[30px] h-[30px] cursor-pointer text-lg bg-gray-600/80 disabled:cursor-not-allowed"
-        :class="currPage === page ? 'text-green-500' : 'text-white'"
+        :class="paginationStore.currPage === page ? 'text-green-500' : 'text-white'"
         :disabled="animeApiStore.isLoading"
-        @click="pagination.customPage(page)"
+        @click="paginationStore.goToPage(page)"
         >
         {{ page }}
       </button>
@@ -38,7 +35,7 @@ const animeApiStore = useAnimeApiStore()
       <button
       class="flex justify-center items-center w-[30px] h-[30px] cursor-pointer disabled:cursor-not-allowed"
       :disabled="animeApiStore.isLoading"
-      @click="pagination.nextPage"
+      @click="paginationStore.nextPage"
       >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
           class="size-5">
@@ -49,7 +46,7 @@ const animeApiStore = useAnimeApiStore()
   </ul>
   <base-btn
   class="mx-auto"
-  @click="pagination.loadMore"
+  @click="paginationStore.loadMore"
   >
     Загрузить еще
   </base-btn>

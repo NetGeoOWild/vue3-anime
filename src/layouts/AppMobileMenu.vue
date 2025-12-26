@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { useMobileMenu } from '@/composables/useMobileMenu';
+import { usePaginationStore } from '@/stores/paginationStore';
+import { useRoute } from 'vue-router';
 
 const { closeMobileMenu } = useMobileMenu();
+const route = useRoute()
+const paginationStore = usePaginationStore()
 
 defineEmits(['close-mobile'])
 
@@ -37,7 +41,7 @@ defineProps({
 
     <ul>
       <li class="uppercase font-bold text-[16px] text-[#444]/60 mb-2.5">
-        <router-link :to="{ name: 'home' }" class="block" @click="closeMobileMenu">Анимэ</router-link>
+        <router-link :to="{ name: 'home', query: { ...route.query, page: paginationStore.currPage } }" class="block" @click="closeMobileMenu">Анимэ</router-link>
       </li>
       <li class="uppercase font-bold text-[16px] text-[#444]/60 mb-2.5">
         <router-link :to="{ name: 'favorites' }" class="block" @click="closeMobileMenu">Избранное</router-link>

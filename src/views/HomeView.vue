@@ -1,22 +1,15 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import { useAnimeRouteStore } from '@/stores/animeRouteStore'
 import { useAnimeApiStore } from '@/stores/animeApiStore';
-import type { ApiAnimeList } from '@/types/api';
-import type { AnimeList } from '@/types/anime';
+import { usePaginationStore } from '@/stores/paginationStore';
 import BaseAnimeCard from '@/components/ui/BaseAnimeCard.vue';
 import BaseLoader from '@/components/ui/BaseLoader.vue';
 import BaseAxiosError from '@/components/ui/BaseAxiosError.vue';
 import BasePagination from '@/components/ui/BasePagination.vue';
-import BaseBtn from '@/components/ui/BaseBtn.vue';
 
 const animeRouteStore = useAnimeRouteStore();
 const animeApiStore = useAnimeApiStore();
-
-onMounted(async () => {
-  await animeApiStore.fetchAnimeData()
-  animeRouteStore.fillData(animeApiStore.homeData?.data as ApiAnimeList) as AnimeList
-})
+const paginationStore = usePaginationStore()
 </script>
 
 <template>
@@ -36,7 +29,7 @@ onMounted(async () => {
     <base-loader v-if="animeApiStore.isLoading"></base-loader>
 
     <base-axios-error v-if="animeApiStore.customError" :error="animeApiStore.customError"
-      @retry="animeApiStore.retryAnimeCards">
+      @retry="animeApiStore.retryAnimeCards(paginationStore.currPage)">
     </base-axios-error>
   </main>
 </template>

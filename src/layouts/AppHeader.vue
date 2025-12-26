@@ -1,7 +1,14 @@
 <script setup lang="ts">
-import AppMobileMenu from './AppMobileMenu.vue';
+import { useRoute } from 'vue-router';
 import { useMobileMenu } from '@/composables/useMobileMenu';
+import { useAnimeApiStore } from '@/stores/animeApiStore';
+import { usePaginationStore } from '@/stores/paginationStore';
+import AppMobileMenu from './AppMobileMenu.vue';
 const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu();
+
+const route = useRoute()
+const animeApiStore = useAnimeApiStore()
+const paginationStore = usePaginationStore()
 </script>
 
 <template>
@@ -9,13 +16,14 @@ const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu();
 
     <div class="container">
       <div class="bg-white flex justify-around items-center align-middle max-[1220px]:justify-between px-5">
-        <router-link :to="{ name: 'home' }" class="block">
+        <router-link :to="{ name: 'home', query: { ...route.query, page: paginationStore.currPage } }" class="block">
           <img class="block w-full max-w-[200px]" src="../assets/images/logo.png" alt="logo" />
         </router-link>
 
         <ul class="flex justify-around items-center align-middle flex-wrap gap-5 max-[1220px]:hidden">
           <li class="uppercase font-bold text-[16px] text-[#444]/60">
-            <router-link :to="{ name: 'home' }" class="hover:text-green-600 transition-all duration-300 block">
+            <router-link :to="{ name: 'home', query: { ...route.query, page: paginationStore.currPage } }"
+              class="hover:text-green-600 transition-all duration-300 block">
               Анимэ
             </router-link>
           </li>
@@ -27,7 +35,7 @@ const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu();
         </ul>
 
         <div class="w-full max-w-[440px] relative max-[1220px]:hidden">
-          <input
+          <input v-model.trim="animeApiStore.searchInput"
             class="w-full border border-green-600 rounded-[5px] text-[16px] pl-2.5 pr-[45px] py-1 shadow-[inset_0_2px_3px_0_rgba(0,0,0,0.1)] focus:outline-none"
             type="text" placeholder="Введите название">
           <button
