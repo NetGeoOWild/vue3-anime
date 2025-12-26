@@ -12,33 +12,47 @@ export const usePaginationStore = defineStore('paginationStore', () => {
   const route = useRoute()
   const router = useRouter()
 
+  const pageParamName = computed(() => {
+    return animeApiStore.searchInput.length === 0 ? 'page' : 'search-page'
+  })
+
   const currPage = computed(() => {
-    return route.query.page ? Number(route.query.page) : 1
+    return route.query[pageParamName.value] ? Number(route.query[pageParamName.value]) : 1
   })
 
   function paginationMounted() {
     onMounted(() => {
       console.log('usePagination mounted')
-      if (!route.query.page) {
-        router.push({
-          query: { ...route.query, page: 1 },
-        })
+      const query = { ...route.query }
+
+      if (pageParamName.value === 'page') {
+        delete query['search-page']
+        query.page = '1'
+      } else if (pageParamName.value === 'search-page') {
+        delete query['page']
+        query['search-page'] = '1'
+      } else {
+        query.page = '1'
       }
+
+      router.push({ query })
     })
   }
 
   watch(
-    () => route.query.page,
+    () => route.query[pageParamName.value],
     async (newPage, oldPage) => {
       if (!newPage) return
       if (newPage === oldPage) return
+
       console.log('Watch triggered:', newPage)
+
       if (newPage) {
         await fetchPage(Number(newPage))
         animeApiStore.loadMoreBtn = false
       }
     },
-    { immediate: true },
+    { immediate: true, deep: true },
   )
 
   async function fetchPage(page: number): Promise<void> {
@@ -62,14 +76,17 @@ export const usePaginationStore = defineStore('paginationStore', () => {
   })
 
   const goToPage = (page: number) => {
-    if (page === currPage.value) return
+    const query = { ...route.query }
 
-    router.push({
-      query: {
-        ...route.query,
-        page,
-      },
-    })
+    if (pageParamName.value === 'page') {
+      delete query['search-page']
+      query.page = page.toString()
+    } else {
+      delete query['page']
+      query['search-page'] = page.toString()
+    }
+
+    router.push({ query })
   }
 
   const nextPage = () => {
@@ -91,7 +108,18 @@ export const usePaginationStore = defineStore('paginationStore', () => {
     }
   }
 
+  const goHome = () => {
+    animeApiStore.searchInput = ''
+    router.replace({
+      name: 'home',
+      query: {
+        page: 1,
+      },
+    })
+  }
+
   return {
+    pageParamName,
     currPage,
     lastPage,
     allPages,
@@ -101,5 +129,6 @@ export const usePaginationStore = defineStore('paginationStore', () => {
     prevPage,
     loadMore,
     paginationMounted,
+    goHome,
   }
 })

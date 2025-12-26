@@ -1,31 +1,30 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
 import { useMobileMenu } from '@/composables/useMobileMenu';
 import { useAnimeApiStore } from '@/stores/animeApiStore';
 import { usePaginationStore } from '@/stores/paginationStore';
 import AppMobileMenu from './AppMobileMenu.vue';
 const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu();
 
-const route = useRoute()
 const animeApiStore = useAnimeApiStore()
 const paginationStore = usePaginationStore()
 </script>
 
 <template>
-  <header>
-
+  <header class="sticky top-0 z-999">
     <div class="container">
       <div class="bg-white flex justify-around items-center align-middle max-[1220px]:justify-between px-5">
-        <router-link :to="{ name: 'home', query: { ...route.query, page: paginationStore.currPage } }" class="block">
+        <button class="block cursor-pointer" @click="paginationStore.goHome">
           <img class="block w-full max-w-[200px]" src="../assets/images/logo.png" alt="logo" />
-        </router-link>
+        </button>
 
         <ul class="flex justify-around items-center align-middle flex-wrap gap-5 max-[1220px]:hidden">
-          <li class="uppercase font-bold text-[16px] text-[#444]/60">
-            <router-link :to="{ name: 'home', query: { ...route.query, page: paginationStore.currPage } }"
-              class="hover:text-green-600 transition-all duration-300 block">
+          <li>
+            <button class="hover:text-green-600 transition-all
+            duration-300 block uppercase font-bold text-[16px] text-[#444]/60 cursor-pointer"
+            @click="paginationStore.goHome"
+            >
               Анимэ
-            </router-link>
+            </button>
           </li>
           <li class="uppercase font-bold text-[16px] text-[#444]/60">
             <router-link :to="{ name: 'favorites' }" class="hover:text-green-600 transition-all duration-300 block">
@@ -36,9 +35,10 @@ const paginationStore = usePaginationStore()
 
         <div class="w-full max-w-[440px] relative max-[1220px]:hidden">
           <input v-model.trim="animeApiStore.searchInput"
+            @keyup.enter="paginationStore.goToPage(paginationStore.currPage)"
             class="w-full border border-green-600 rounded-[5px] text-[16px] pl-2.5 pr-[45px] py-1 shadow-[inset_0_2px_3px_0_rgba(0,0,0,0.1)] focus:outline-none"
             type="text" placeholder="Введите название">
-          <button
+          <button @click="paginationStore.goToPage(paginationStore.currPage)"
             class="w-10 h-10 flex justify-center align-middle items-center absolute right-0 -top-[3px] cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
               stroke="currentColor" class="text-green-600 size-5">
@@ -57,7 +57,6 @@ const paginationStore = usePaginationStore()
 
       </div>
     </div>
-
   </header>
 
   <app-mobile-menu :is-mobile-menu-open="isMobileMenuOpen" @close-mobile="closeMobileMenu"></app-mobile-menu>

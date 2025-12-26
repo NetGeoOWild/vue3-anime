@@ -7,7 +7,7 @@ const emits = defineEmits(['click'])
 </script>
 
 <template>
-  <div class="w-[30px] h-[30px] absolute top-1.5 right-1.5 z-50 cursor-pointer border border-solid border-green-500"
+  <div class="w-[30px] h-[30px] absolute top-1.5 right-1.5 z-99 cursor-pointer border border-solid border-green-500"
     :class="isInFavorites ? 'bg-green-500' : 'bg-gray-600/80'">
     <button class="block w-full h-full" @click.prevent.stop="emits('click')">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"

@@ -7,7 +7,7 @@ paginationStore.paginationMounted()
 </script>
 
 <template>
-  <div class="min-w-[320px] pt-[250px] max-[470px]:pt-0 max-[470px]:overflow-hidden">
+  <div class="min-w-[320px] pt-[250px] max-[470px]:pt-0">
     <div class="w-full max-w-[1100px] mx-auto my-0 max-[1220px]:max-w-[1000px] max-[951px]:max-w-3xl
     max-[761px]:max-w-[640px] max-[591px]:max-w-[480px]">
       <app-header></app-header>

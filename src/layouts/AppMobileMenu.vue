@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useMobileMenu } from '@/composables/useMobileMenu';
+import { useAnimeApiStore } from '@/stores/animeApiStore';
 import { usePaginationStore } from '@/stores/paginationStore';
-import { useRoute } from 'vue-router';
 
 const { closeMobileMenu } = useMobileMenu();
-const route = useRoute()
 const paginationStore = usePaginationStore()
+const animeApiStore = useAnimeApiStore()
 
 defineEmits(['close-mobile'])
 
@@ -16,6 +16,11 @@ defineProps({
     default: false,
   }
 })
+
+function animeBtnHandler() {
+  closeMobileMenu()
+  paginationStore.goHome()
+}
 </script>
 
 <template>
@@ -27,9 +32,12 @@ defineProps({
     :class="isMobileMenuOpen ? 'left-0' : '-left-280'">
     <div class="w-full relative mb-2.5">
       <input
+        v-model.trim="animeApiStore.searchInput"
+        @keyup.enter="paginationStore.goToPage(paginationStore.currPage)"
         class="w-full border border-green-600 rounded-[5px] text-[16px] pl-2.5 pr-[45px] py-1 shadow-[inset_0_2px_3px_0_rgba(0,0,0,0.1)] focus:outline-none"
         type="text" placeholder="Введите название">
       <button
+        @click="paginationStore.goToPage(paginationStore.currPage)"
         class="w-10 h-10 flex justify-center align-middle items-center absolute right-0 -top-[3px] cursor-pointer">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
           class="text-green-600 size-5">
@@ -40,11 +48,12 @@ defineProps({
     </div>
 
     <ul>
-      <li class="uppercase font-bold text-[16px] text-[#444]/60 mb-2.5">
-        <router-link :to="{ name: 'home', query: { ...route.query, page: paginationStore.currPage } }" class="block" @click="closeMobileMenu">Анимэ</router-link>
+      <li class="mb-2.5">
+        <button class="block uppercase font-bold text-[16px] text-[#444]/60 " @click="animeBtnHandler">Анимэ</button>
       </li>
-      <li class="uppercase font-bold text-[16px] text-[#444]/60 mb-2.5">
-        <router-link :to="{ name: 'favorites' }" class="block" @click="closeMobileMenu">Избранное</router-link>
+      <li class="mb-2.5">
+        <router-link :to="{ name: 'favorites' }" class="block uppercase font-bold text-[16px] text-[#444]/60"
+          @click="closeMobileMenu">Избранное</router-link>
       </li>
     </ul>
 

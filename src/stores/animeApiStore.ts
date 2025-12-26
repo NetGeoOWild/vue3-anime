@@ -1,4 +1,4 @@
-import { ref, shallowRef, watch } from 'vue'
+import { computed, ref, shallowRef, watch } from 'vue'
 import { defineStore } from 'pinia'
 import axios, { AxiosError } from 'axios'
 import { useAnimeRouteStore } from './animeRouteStore'
@@ -6,13 +6,18 @@ import { useAnimeStore } from './animeStore'
 import { CACHE_TIME, STORE_PERSIST_ANIME_FETCH_DATA, BASE_URL, BASE_SEARCH_URL } from '@/constants'
 import type { ApiAnimeList, ApiData } from '@/types/api'
 import type { AnimeList, OneAnime } from '@/types/anime'
+import { useRouter } from 'vue-router'
 
 export const useAnimeApiStore = defineStore(
   'apiAnimeData',
   () => {
     const searchInput = ref<string>('')
     const apiUrl = ref<string>(BASE_URL)
-    const isSearch = ref<boolean>(false)
+
+    const isSearch = computed(() => {
+      return searchInput.value.length !== 0 ? true : false
+    })
+
     const loadMoreBtn = ref<boolean>(false)
 
     const firstPage = shallowRef<ApiData | null>(null)
@@ -24,16 +29,21 @@ export const useAnimeApiStore = defineStore(
 
     const animeRouteStore = useAnimeRouteStore()
     const animeStore = useAnimeStore()
+    const router = useRouter()
 
     watch(
       searchInput,
       (newVal) => {
         if (newVal.length === 0) {
           apiUrl.value = `${BASE_URL}?page=`
-          isSearch.value = false
+          router.replace({
+            name: 'home',
+            query: {
+              page: 1,
+            },
+          })
         } else {
           apiUrl.value = `${BASE_SEARCH_URL}${searchInput.value}&page=`
-          isSearch.value = true
         }
       },
       { immediate: true },
@@ -163,7 +173,7 @@ export const useAnimeApiStore = defineStore(
     }
 
     async function retryAnimeCards(page: number): Promise<void> {
-      const apiAnimeData = await fetchAnimeData(undefined, page) as ApiData
+      const apiAnimeData = (await fetchAnimeData(undefined, page)) as ApiData
       animeRouteStore.fillData(apiAnimeData.data) as AnimeList
     }
 
