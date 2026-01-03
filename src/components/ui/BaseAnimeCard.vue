@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { useAnimeRouteStore } from '@/stores/animeRouteStore';
 import { useAnimeStore } from '@/stores/animeStore';
+import { useFirebaseUserStore } from '@/stores/firebaseUserStore';
 import type { OneAnime } from '@/types/anime';
 import BaseFavoriteBtn from './BaseFavoriteBtn.vue';
 
 const animeRouteStore = useAnimeRouteStore();
 const animeStore = useAnimeStore()
+const firebaseUserStore = useFirebaseUserStore()
 
 defineProps<{
   anime: OneAnime,
@@ -32,7 +34,7 @@ defineProps<{
     </div>
 
     <!--favorites-->
-    <base-favorite-btn :is-in-favorites="animeRouteStore.isAnimeFavorite(anime.id)"
+    <base-favorite-btn v-if="firebaseUserStore.user" :is-in-favorites="animeRouteStore.isAnimeFavorite(anime.id)"
       @click="animeRouteStore.favoriteHandler(anime)">
     </base-favorite-btn>
     <!--favorites-->

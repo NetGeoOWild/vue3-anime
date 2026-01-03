@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useMobileMenu } from '@/composables/useMobileMenu';
 import { useAnimeApiStore } from '@/stores/animeApiStore';
+import { useFirebaseUserStore } from '@/stores/firebaseUserStore';
+import { useformStore } from '@/stores/formStore';
 import { usePaginationStore } from '@/stores/paginationStore';
+import BaseUserInterface from '@/components/ui/BaseUserInterface.vue';
 
 const { closeMobileMenu } = useMobileMenu();
 const paginationStore = usePaginationStore()
@@ -17,9 +20,22 @@ defineProps({
   }
 })
 
+const formStore = useformStore()
+const firebaseUserStore = useFirebaseUserStore()
+
 function animeBtnHandler() {
   closeMobileMenu()
   paginationStore.goHome()
+}
+
+function enterLogout() {
+  closeMobileMenu()
+
+  if (firebaseUserStore.user !== null) {
+    firebaseUserStore.logout()
+  } else {
+    formStore.isFormOpen = !formStore.isFormOpen
+  }
 }
 </script>
 
@@ -30,14 +46,12 @@ function animeBtnHandler() {
   <div class="w-full max-w-[280px] bg-white p-2.5 fixed top-0 z-9999 transition-all duration-300
        after:block after:bg-green-600 after:h-1 after:w-full after:absolute after:bottom-0 after:left-0"
     :class="isMobileMenuOpen ? 'left-0' : '-left-280'">
+
     <div class="w-full relative mb-2.5">
-      <input
-        v-model.trim="animeApiStore.searchInput"
-        @keyup.enter="paginationStore.goToPage(paginationStore.currPage)"
+      <input v-model.trim="animeApiStore.searchInput" @keyup.enter="paginationStore.goToPage(paginationStore.currPage)"
         class="w-full border border-green-600 rounded-[5px] text-[16px] pl-2.5 pr-[45px] py-1 shadow-[inset_0_2px_3px_0_rgba(0,0,0,0.1)] focus:outline-none"
         type="text" placeholder="Введите название">
-      <button
-        @click="paginationStore.goToPage(paginationStore.currPage)"
+      <button @click="paginationStore.goToPage(paginationStore.currPage)"
         class="w-10 h-10 flex justify-center align-middle items-center absolute right-0 -top-[3px] cursor-pointer">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
           class="text-green-600 size-5">
@@ -47,13 +61,22 @@ function animeBtnHandler() {
       </button>
     </div>
 
+
+    <base-user-interface>
+      {{ firebaseUserStore.user?.userName.length as number > 15 ? firebaseUserStore.user?.userName.slice(0, 13) +
+        '...' :
+        firebaseUserStore.user?.userName }}
+    </base-user-interface>
+
     <ul>
       <li class="mb-2.5">
         <button class="block uppercase font-bold text-[16px] text-[#444]/60 " @click="animeBtnHandler">Анимэ</button>
       </li>
       <li class="mb-2.5">
-        <router-link :to="{ name: 'favorites' }" class="block uppercase font-bold text-[16px] text-[#444]/60"
-          @click="closeMobileMenu">Избранное</router-link>
+        <button class="hover:text-green-600 transition-all
+            duration-300 block uppercase font-bold text-[16px] text-[#444]/60 cursor-pointer" @click="enterLogout">
+          {{ firebaseUserStore.user ? 'Выйти' : 'Войти' }}
+        </button>
       </li>
     </ul>
 

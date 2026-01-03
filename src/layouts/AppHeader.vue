@@ -2,11 +2,25 @@
 import { useMobileMenu } from '@/composables/useMobileMenu';
 import { useAnimeApiStore } from '@/stores/animeApiStore';
 import { usePaginationStore } from '@/stores/paginationStore';
-import AppMobileMenu from './AppMobileMenu.vue';
+import { useFirebaseUserStore } from '@/stores/firebaseUserStore';
+import { useformStore } from '@/stores/formStore';
 const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu();
+import AppMobileMenu from './AppMobileMenu.vue';
+import BaseForm from '@/components/ui/BaseForm.vue';
+import BaseUserInterface from '@/components/ui/BaseUserInterface.vue';
 
 const animeApiStore = useAnimeApiStore()
 const paginationStore = usePaginationStore()
+const formStore = useformStore()
+const firebaseUserStore = useFirebaseUserStore()
+
+function enterLogout() {
+  if (firebaseUserStore.user !== null) {
+    firebaseUserStore.logout()
+  } else {
+    formStore.isFormOpen = !formStore.isFormOpen
+  }
+}
 </script>
 
 <template>
@@ -21,15 +35,15 @@ const paginationStore = usePaginationStore()
           <li>
             <button class="hover:text-green-600 transition-all
             duration-300 block uppercase font-bold text-[16px] text-[#444]/60 cursor-pointer"
-            @click="paginationStore.goHome"
-            >
+              @click="paginationStore.goHome">
               Анимэ
             </button>
           </li>
-          <li class="uppercase font-bold text-[16px] text-[#444]/60">
-            <router-link :to="{ name: 'favorites' }" class="hover:text-green-600 transition-all duration-300 block">
-              Избранное
-            </router-link>
+          <li>
+            <button class="hover:text-green-600 transition-all
+            duration-300 block uppercase font-bold text-[16px] text-[#444]/60 cursor-pointer" @click="enterLogout">
+              {{ firebaseUserStore.user ? 'Выйти' : 'Войти' }}
+            </button>
           </li>
         </ul>
 
@@ -48,11 +62,20 @@ const paginationStore = usePaginationStore()
           </button>
         </div>
 
-        <div class="mobile hidden max-[1220px]:block" @click="toggleMobileMenu">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-          </svg>
+        <div class="flex justify-center items-center align-middle">
+
+          <div class="mobile hidden max-[1220px]:block" @click="toggleMobileMenu">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </div>
+
+          <base-user-interface class="max-[1220px]:hidden ml-10">
+            {{ firebaseUserStore.user?.userName.length as number > 15 ? firebaseUserStore.user?.userName.slice(0, 13) +
+              '...' :
+              firebaseUserStore.user?.userName }}
+          </base-user-interface>
         </div>
 
       </div>
@@ -60,4 +83,5 @@ const paginationStore = usePaginationStore()
   </header>
 
   <app-mobile-menu :is-mobile-menu-open="isMobileMenuOpen" @close-mobile="closeMobileMenu"></app-mobile-menu>
+  <base-form></base-form>
 </template>

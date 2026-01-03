@@ -1,5 +1,8 @@
 import { ref, computed } from 'vue'
 import type { OneAnime } from '@/types/anime'
+import imageDanceFirst from '@/assets/images/dance_1.gif'
+import imageDanceSecond from '@/assets/images/dance_2.gif'
+import imageDanceThird from '@/assets/images/dance_3.gif'
 import imagePlaceholder from '@/assets/images/no-image.jpg'
 import { defineStore } from 'pinia'
 
@@ -51,6 +54,9 @@ export const useAnimeStore = defineStore('animeStore', () => {
   })
 
   return {
+    imageDanceThird,
+    imageDanceFirst,
+    imageDanceSecond,
     anime,
     imagePlaceholder,
     animePoster,

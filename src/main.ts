@@ -15,6 +15,8 @@ pinia.use(piniaPluginPersistedstate)
 const toastOptions: PluginOptions = {
   timeout: 2000,
   position: POSITION.TOP_CENTER,
+  icon: false,
+  closeButton: false,
 }
 
 const app = createApp(App)

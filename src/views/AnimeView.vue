@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import { useAnimeApiStore } from '@/stores/animeApiStore';
 import { useAnimeRouteStore } from '@/stores/animeRouteStore';
 import { useAnimeStore } from '@/stores/animeStore';
+import { useFirebaseUserStore } from '@/stores/firebaseUserStore';
 import type { AnimeList, OneAnime } from '@/types/anime';
 import type { ApiAnimeList } from '@/types/api';
 import BaseFavoriteBtn from '@/components/ui/BaseFavoriteBtn.vue';
@@ -15,6 +16,7 @@ import BaseLoader from '@/components/ui/BaseLoader.vue';
 const animeRouteStore = useAnimeRouteStore();
 const animeApiStore = useAnimeApiStore()
 const animeStore = useAnimeStore()
+const firebaseUserStore = useFirebaseUserStore()
 const route = useRoute();
 
 const animeId = ref(Number(route.params.id))
@@ -48,7 +50,7 @@ onMounted(async () => {
               {{ animeStore.animeScore }}
             </div>
           </div>
-          <base-favorite-btn :is-in-favorites="animeRouteStore.isAnimeFavorite(animeId)"
+          <base-favorite-btn v-if="firebaseUserStore.user" :is-in-favorites="animeRouteStore.isAnimeFavorite(animeId)"
             @click="animeRouteStore.favoriteHandler(animeStore.anime)">
           </base-favorite-btn>
         </div>

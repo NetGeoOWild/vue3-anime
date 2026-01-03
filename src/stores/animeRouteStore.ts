@@ -1,19 +1,20 @@
 import { ref, shallowRef, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useToast } from 'vue-toastification'
+import { useFirebaseUserStore } from './firebaseUserStore'
+import { STORE_PERSIST_FAVORITES } from '@/constants'
 import type { Anime, ApiAnimeList } from '@/types/api'
 import type { AnimeList, OneAnime } from '@/types/anime'
-import { STORE_PERSIST_FAVORITES } from '@/constants'
 
 export const useAnimeRouteStore = defineStore(
   'routeAnime',
   () => {
     const toast = useToast()
+    const firebaseUserStore = useFirebaseUserStore()
     const data = shallowRef<AnimeList | null>(null)
-    const favorites = ref<AnimeList>([])
+    const favorites = ref<AnimeList>(firebaseUserStore.user?.favorites as AnimeList)
 
     const fillData = (apiAnimeList: ApiAnimeList): AnimeList | null => {
-
       if (!apiAnimeList) {
         return null
       }
@@ -46,14 +47,22 @@ export const useAnimeRouteStore = defineStore(
       }
     })
 
-    const addToFavorites = (anime: OneAnime): void => {
-      toast.success('Добавлено в избранное')
+    const addToFavorites = async (anime: OneAnime): Promise<void> => {
       favorites.value.push(anime)
+      await firebaseUserStore.updateUserDatabase(
+        firebaseUserStore.user?.id as string,
+        favorites.value,
+      )
+      toast.success('Добавлено в избранное')
     }
 
-    const removeFromFavorites = (animeId: OneAnime['id']): AnimeList => {
+    const removeFromFavorites = async (animeId: OneAnime['id']): Promise<void> => {
+      favorites.value = favorites.value.filter((anime) => anime.id !== animeId)
+      await firebaseUserStore.updateUserDatabase(
+        firebaseUserStore.user?.id as string,
+        favorites.value,
+      )
       toast.warning('Удалено из избранного')
-      return (favorites.value = favorites.value.filter((anime) => anime.id !== animeId))
     }
 
     const getData = (animeId: OneAnime['id']): OneAnime | undefined => {

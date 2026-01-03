@@ -1,9 +1,22 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue';
+import { usePaginationStore } from './stores/paginationStore';
+import { useFirebaseUserStore } from './stores/firebaseUserStore';
 import AppFooter from './layouts/AppFooter.vue';
 import AppHeader from './layouts/AppHeader.vue';
-import { usePaginationStore } from './stores/paginationStore';
+
+
 const paginationStore = usePaginationStore()
+const firebaseUserStore = useFirebaseUserStore()
 paginationStore.paginationMounted()
+
+onMounted(() => {
+  firebaseUserStore.init()
+})
+
+onUnmounted(() => {
+  firebaseUserStore.cleanup()
+})
 </script>
 
 <template>

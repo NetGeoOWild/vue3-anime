@@ -20,3 +20,19 @@ body {
   max-width: 1100px;
   margin: 0 auto;
 }
+
+.Vue-Toastification__toast{
+  background-image: url('../images/remove_from_favorite.gif') !important;
+  background-repeat: no-repeat !important;
+  background-size: 20%;
+  background-position-x: right;
+  background-position-y: top;
+}
+
+.Vue-Toastification__toast--success {
+  background-image: url('../images/add_to_favorite.gif') !important;
+  background-repeat: no-repeat !important;
+  background-size: 20%;
+  background-position-x: right;
+  background-position-y: top;
+}

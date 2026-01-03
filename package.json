@@ -19,6 +19,7 @@
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
+    "firebase": "^12.7.0",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
     "tailwindcss": "^4.1.17",
@@ -29,7 +30,7 @@
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.3",
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.10.4",
     "@vitejs/plugin-vue": "^6.0.2",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
