@@ -202,6 +202,7 @@ export const useAnimeApiStore = defineStore(
       retryAnimeCards,
     }
   },
+
   {
     persist: {
       key: STORE_PERSIST_ANIME_FETCH_DATA,
