@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useAnimeRouteStore } from '@/stores/animeRouteStore';
-import BaseFilmCard from '@/components/ui/BaseAnimeCard.vue';
-import BaseBtn from '@/components/ui/BaseBtn.vue';
+import { useAnimeRouteStore } from '@/stores/animeRouteStore'
+import BaseFilmCard from '@/components/ui/BaseAnimeCard.vue'
+import BaseBtn from '@/components/ui/BaseBtn.vue'
 
-const animeRouteStore = useAnimeRouteStore();
+const animeRouteStore = useAnimeRouteStore()
 </script>
 
 <template>
@@ -15,9 +15,7 @@ const animeRouteStore = useAnimeRouteStore();
         <base-film-card v-for="anime in animeRouteStore.favorites" :key="anime.id" :anime="anime">
         </base-film-card>
       </div>
-
     </div>
-
 
     <div class="text-center" v-else>
       <base-btn class="mx-auto" @click="$router.back">Вернуться назад</base-btn>

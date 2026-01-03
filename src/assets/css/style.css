@@ -21,7 +21,7 @@ body {
   margin: 0 auto;
 }
 
-.Vue-Toastification__toast{
+.Vue-Toastification__toast {
   background-image: url('../images/remove_from_favorite.gif') !important;
   background-repeat: no-repeat !important;
   background-size: 20%;
