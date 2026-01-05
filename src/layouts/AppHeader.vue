@@ -30,7 +30,7 @@ function enterLogout() {
         class="bg-white flex justify-around items-center align-middle max-[1220px]:justify-between px-5"
       >
         <button class="block cursor-pointer" @click="paginationStore.goHome">
-          <img class="block w-full max-w-[200px]" src="../assets/images/logo.png" alt="logo" />
+          <img class="block w-full max-w-[200px] max-[951px]:max-w-[150px] max-[591px]:max-w-[100px]" src="../assets/images/logo.png" alt="logo" />
         </button>
 
         <ul

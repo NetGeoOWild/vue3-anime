@@ -11,7 +11,7 @@ const paginationStore = usePaginationStore()
       >
         <div class="flex items-center align-middle max-[768px]:flex-col-reverse">
           <button @click="paginationStore.goHome" class="block cursor-pointer">
-            <img class="block w-full max-w-[200px]" src="../assets/images/logo.png" alt="logo" />
+            <img class="block w-full max-w-[200px] max-[951px]:max-w-[150px] max-[591px]:max-w-[100px]" src="../assets/images/logo.png" alt="logo" />
           </button>
           <p class="text-white text-lg max-[768px]:text-center">
             "GOGA ANIME OT BOGA" - сайт онлайн anime в хорошем качестве бесплатно.
