@@ -9,10 +9,11 @@ body {
   background-attachment: fixed;
 }
 
+.shrek,
 .footer:hover {
   background: url('../images/hover_sherk.jpg');
   background-repeat: repeat;
-  background-size: 200px 150px;
+  background-size: 150px 100px;
 }
 
 .container {
